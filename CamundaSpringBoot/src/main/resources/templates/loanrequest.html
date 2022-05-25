@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Loan Request</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<style type = "text/css" media = "all">
+	       div.mainframe{
+	       		height: 200px;
+	       		border-style: outset;
+	       		border-width: thin;
+	       }  
+	       .container{
+	       		overflow: auto
+	       }
+	</style>
+	<script>
+	function submitLoanRequest(){
+		var obj = {};
+    	obj['name'] = $('#tb_name').val();
+    	obj['ssn'] =  $('#tb_ssn').val();
+    	console.log('submitLoanRequest');
+    	callajax('/initiateloan','POST',obj);
+	}
+	function callajax(resturl,method,inputdata){
+		   // console.log("====== inputdata ==== "+inputdata);
+			$.ajax({
+				type: method,
+				url: resturl,
+				data: JSON.stringify( inputdata),
+				contentType: 'application/json',
+				dataType: 'json',
+				headers:{
+					"Access-Control-Allow-Headers":"X-Requested-With"
+				},
+				success: function(data){
+					
+				},
+		        error: function(xhr, ajaxOptions, thrownError, request, error){
+		        	
+		        	console.log('xrs.status = ' + xhr.status + '\n' + 
+		        	            'thrown error = ' + thrownError + '\n' +
+		        	            'xhr.statusText = '  + xhr.statusText + '\n' +
+		        	            'request = ' + request + '\n' +
+		        	            'error = ' + error);
+		        }
+			}).then(function(data){
+				console.log(data);
+				$.each(
+						data,
+						function(index,value){
+								alert(value);
+								return false;
+							
+						}	
+				);
+			});
+		}
+	</script>
+</head>
+<body>
+	<br><br><br>
+	<div class="container mainframe">
+		<br>
+		<input class = "form-control" type="text" id="tb_name" placeholder="Name"/>
+		<br>
+		<input class = "form-control" type="text" id="tb_ssn" placeholder="SSN"/>
+		<br>
+		<button class = "btn btn-info btn-block" onclick="submitLoanRequest()">Submit</button>
+	</div>
+</body>
+</html>
