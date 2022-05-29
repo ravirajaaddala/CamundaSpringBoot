@@ -1,5 +1,9 @@
 package com.rra.base.controller;
 
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.rra.base.modal.LoanRequestModal;
-import com.rra.base.service.CamundaUtilService;
+import com.rra.base.service.LoanService;
 
 @Controller
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ScreenController {
 	
-	@Autowired
-	private CamundaUtilService util;
+	private static final Logger _logger = LoggerFactory.getLogger(ScreenController.class);
+
+	@Autowired 
+	private LoanService loanService;
 
 	@GetMapping("/loan")
 	public String loanRequest() {
@@ -28,22 +35,30 @@ public class ScreenController {
 	@PostMapping("/initiateloan")
 	@ResponseBody
 	public ResponseEntity<String> submiLoanRequest(@RequestBody LoanRequestModal l) {
-		System.out.println("start loan request "+l.getName());
+		_logger.info("start loan request "+l.getName());
+		String status = "Loan request submitted";
+		HashMap<String,String> response = new HashMap<String,String>();
 		try {
-			util.start(l.getSsn(), l.getName());
+			boolean isLoanRequestExists = loanService.isLoanRequestExists(l.getSsn());
+			if(isLoanRequestExists) {
+				status = "A loan request already exists";
+			}else {
+				loanService.initiateLoanRequest(l.getPhoneNumber(), l.getSsn(), l.getName(), l.getMailId());
+			}
 		}catch(Exception e) {
-			return new ResponseEntity("Loan request failed", getJsonHeader(), HttpStatus.OK);
+			status = "Loan request failed";
 		}
-		
-		return new ResponseEntity("Loan request submitted", getJsonHeader(), HttpStatus.OK);
+		response.put("status", status);
+		return new ResponseEntity(response, getJsonHeader(), HttpStatus.OK);
 	}
+	
 	
 	@PostMapping("/acceptoffer")
 	@ResponseBody
 	public ResponseEntity<String> acceptoffer(@RequestBody LoanRequestModal l) {
-		System.out.println("start loan request "+l.getName());
+		_logger.info("start loan request "+l.getName());
 		try {
-			util.start(l.getSsn(), l.getName());
+			loanService.decideLoanRequest(l.getSsn(), l.getAccept());
 		}catch(Exception e) {
 			return new ResponseEntity("Loan request failed", getJsonHeader(), HttpStatus.OK);
 		}

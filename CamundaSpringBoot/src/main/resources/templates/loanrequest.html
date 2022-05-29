@@ -8,7 +8,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 	<style type = "text/css" media = "all">
 	       div.mainframe{
-	       		height: 200px;
+	       		height: 300px;
 	       		border-style: outset;
 	       		border-width: thin;
 	       }  
@@ -21,6 +21,8 @@
 		var obj = {};
     	obj['name'] = $('#tb_name').val();
     	obj['ssn'] =  $('#tb_ssn').val();
+    	obj['mailId'] =  $('#tb_mailId').val();
+    	obj['phoneNumber'] =  $('#tb_phonenumber').val();
     	console.log('submitLoanRequest');
     	callajax('/initiateloan','POST',obj);
 	}
@@ -67,6 +69,10 @@
 		<input class = "form-control" type="text" id="tb_name" placeholder="Name"/>
 		<br>
 		<input class = "form-control" type="text" id="tb_ssn" placeholder="SSN"/>
+		<br>
+		<input class = "form-control" type="text" id="tb_mailId" placeholder="Mail Id"/>
+		<br>
+		<input class = "form-control" type="text" id="tb_phonenumber" placeholder="Phone Number"/>
 		<br>
 		<button class = "btn btn-info btn-block" onclick="submitLoanRequest()">Submit</button>
 	</div>
